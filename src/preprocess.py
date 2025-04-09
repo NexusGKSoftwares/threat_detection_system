@@ -1,8 +1,12 @@
 import pandas as pd
 
-def preprocess_log_data(log_df):
-    # Example: extracting timestamp, source IP, event type
-    log_df['timestamp'] = pd.to_datetime(log_df['timestamp'])
-    log_df['hour'] = log_df['timestamp'].dt.hour
-    log_df['is_brute_force'] = log_df['event'].apply(lambda x: 1 if 'failed login' in x.lower() else 0)
-    return log_df
+def preprocess_data(filepath):
+    df = pd.read_csv(filepath)
+    
+    # Convert IPs to numeric if needed
+    df['src_ip_int'] = df['src'].apply(lambda x: sum([int(part) << (8 * i) for i, part in enumerate(reversed(x.split('.')))]))
+    df['dst_ip_int'] = df['dst'].apply(lambda x: sum([int(part) << (8 * i) for i, part in enumerate(reversed(x.split('.')))]))
+    
+    df['protocol_code'] = df['protocol'].astype('category').cat.codes
+    df = df[['src_ip_int', 'dst_ip_int', 'protocol_code', 'length']]
+    return df
