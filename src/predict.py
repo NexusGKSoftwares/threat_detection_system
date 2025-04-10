@@ -16,3 +16,4 @@ def predict_realtime(new_data_path):
     df['anomaly'] = df['anomaly'].apply(lambda x: "Anomaly" if x == -1 else "Normal")
     df.to_csv("data/preprocessed/predictions.csv", index=False)
     print("[+] Predictions saved.")
+
